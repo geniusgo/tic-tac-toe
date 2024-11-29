@@ -1,0 +1,17 @@
+.header {
+  height: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin: 10px auto;
+  gap: 30px;
+}
+
+.header > .score {
+  flex: 1;
+}
+
+.header > div > button {
+  cursor: pointer;
+}

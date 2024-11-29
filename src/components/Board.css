@@ -1,0 +1,16 @@
+.board {
+  width: 340px;
+}
+
+.board > tr {
+  height: 110px;
+}
+
+.board > tr > td {
+  width: 110px;
+  height: 110px;
+  box-sizing: border-box;
+  padding: 0;
+  text-align: center;
+  border: 1px solid #000000;
+}
