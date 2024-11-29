@@ -1,6 +1,10 @@
+import { useState } from 'react';
 import './Board.css';
+import { Record } from '../types/types';
 
 const Board = () => {
+  const [record, setRecord] = useState<Record | null>(null);
+
   return (
     <table className='board'>
       <tr className='board-row'>
