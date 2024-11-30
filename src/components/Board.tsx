@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import './Board.css';
+import { useEffect, useState } from 'react';
 import { Records, Scores } from '../types/types';
 import { WINNING_CONDITION } from '../constants/winning-condition';
 
@@ -29,7 +29,7 @@ const Board = ({
   const [alert, setAlert] = useState(false);
 
   // space 클릭할 때마다 O-X 화면에 표시하고 records에 기록
-  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+  const handleBoardClick = (e: React.MouseEvent<HTMLElement>) => {
     const target = e.target as HTMLElement; // dataset 가져오기 위해 e.target을 HTMLElement 타입으로 단언
 
     // 한 번 둔 위치에 다시 두면 안내 문구 보여주기
@@ -84,7 +84,7 @@ const Board = ({
   return (
     <div className='board-container'>
       <table>
-        <tbody className='board' onClick={handleClick}>
+        <tbody className='board' onClick={handleBoardClick}>
           <tr className='board-row'>
             <td className='space' data-space='0'>
               {histories[histories.length - 1][0]}

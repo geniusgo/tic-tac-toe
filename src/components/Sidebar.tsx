@@ -7,7 +7,7 @@ interface Props {
 }
 
 const Sidebar = ({ histories, handleHistoriesBack }: Props) => {
-  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+  const handleHistories = (e: React.MouseEvent<HTMLElement>) => {
     const target = e.target as HTMLElement;
     handleHistoriesBack(Number(target.id));
   };
@@ -19,7 +19,7 @@ const Sidebar = ({ histories, handleHistoriesBack }: Props) => {
         if (idx === 0) return;
         // key를 인덱스로 하는 게 좀 찝찝해서, 변경 고민해보기
         return (
-          <button id={String(idx)} key={idx} onClick={handleClick}>{`${idx} 번째 turn`}</button>
+          <button id={String(idx)} key={idx} onClick={handleHistories}>{`${idx} 번째 turn`}</button>
         );
       })}
     </div>
