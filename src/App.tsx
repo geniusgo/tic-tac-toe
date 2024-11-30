@@ -26,11 +26,9 @@ export const DispatchContext = createContext<Dispatch | null>(null);
 
 function App() {
   const [histories, dispatch] = useReducer(reducer, [Array(9).fill('')]); // 진행된 턴의 누적 기록 보관
-  const [turn, setTurn] = useState('O'); // 누구 차례인지, 처음은 O부터 시작
+  const [turn, setTurn] = useState('O');
   const [scores, setScores] = useState<Scores>({ O: 0, X: 0 });
-
-  // dispatch 감싼 이벤트 함수들 초기화
-  const { handleHistoriesAdd, handleHistoriesBack, handleHistoriesReset } = useDispatch(dispatch);
+  const { handleHistoriesAdd, handleHistoriesBack, handleHistoriesReset } = useDispatch(dispatch); // histories의 dispatch 함수들 초기화
 
   return (
     <StateContext.Provider value={{ histories, turn, scores }}>

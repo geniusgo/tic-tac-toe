@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { Dispatch, Scores, State } from '../types/types';
 import { StateContext, DispatchContext } from '../App';
 
+/** Header 컴포넌트 **/
 const Header = () => {
   const { turn, scores } = useContext(StateContext) as State; // null이 아님을 단언
   const { setScores, handleHistoriesReset } = useContext(DispatchContext) as Dispatch; // null이 아님을 단언
