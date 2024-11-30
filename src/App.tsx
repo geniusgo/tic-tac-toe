@@ -4,6 +4,7 @@ import Board from './components/Board';
 import Sidebar from './components/Sidebar';
 import { useReducer, useState, useEffect } from 'react';
 import { Histories, Records } from './types/types';
+import { WINNING_CONDITION } from './constants/winning-condition';
 
 type Action =
   | { type: 'ADD'; records: string[] }
@@ -64,6 +65,7 @@ function App() {
           setTurn={setTurn}
           setRecords={setRecords}
           handleHistoriesAdd={handleHistoriesAdd}
+          handleHistoriesReset={handleHistoriesReset}
         />
         <Sidebar histories={histories} handleHistoriesBack={handleHistoriesBack} />
       </div>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import './Board.css';
 import { Records } from '../types/types';
+import { WINNING_CONDITION } from '../constants/winning-condition';
 
 interface Props {
   turn: string;
@@ -9,9 +10,18 @@ interface Props {
   setTurn: React.Dispatch<React.SetStateAction<string>>;
   setRecords: React.Dispatch<React.SetStateAction<Records>>;
   handleHistoriesAdd: (record: string[]) => void;
+  handleHistoriesReset: () => void;
 }
 
-const Board = ({ turn, records, histories, setTurn, setRecords, handleHistoriesAdd }: Props) => {
+const Board = ({
+  turn,
+  records,
+  histories,
+  setTurn,
+  setRecords,
+  handleHistoriesAdd,
+  handleHistoriesReset,
+}: Props) => {
   const [alert, setAlert] = useState(false);
 
   // space 클릭할 때마다 O-X 화면에 표시하고 records에 기록
@@ -39,41 +49,57 @@ const Board = ({ turn, records, histories, setTurn, setRecords, handleHistoriesA
     setRecords(histories[histories.length - 1]);
   }, [histories]);
 
+  // 승리 조건 충족 시 끝내기
+  useEffect(() => {
+    // records 바뀔 때마다 승리 조건에 해당하는지 확인해서 분기 처리
+    WINNING_CONDITION.forEach((condition) => {
+      const condition0 = records[condition[0]] !== '';
+      const condition1 = records[condition[0]] === records[condition[1]];
+      const condition2 = records[condition[0]] === records[condition[2]];
+
+      if (condition0 && condition1 && condition2) {
+        if (window.confirm(`${turn === 'O' ? 'X' : 'O'} 승리하였습니다. 다시 할까요?`)) {
+          handleHistoriesReset();
+        }
+      }
+    });
+  }, [records]);
+
   return (
     <div className='board-container'>
       <table>
         <tbody className='board' onClick={handleClick}>
           <tr className='board-row'>
             <td className='space' data-space='0'>
-              {records[0]}
+              {histories[histories.length - 1][0]}
             </td>
             <td className='space' data-space='1'>
-              {records[1]}
+              {histories[histories.length - 1][1]}
             </td>
             <td className='space' data-space='2'>
-              {records[2]}
+              {histories[histories.length - 1][2]}
             </td>
           </tr>
           <tr className='board-row'>
             <td className='space' data-space='3'>
-              {records[3]}
+              {histories[histories.length - 1][3]}
             </td>
             <td className='space' data-space='4'>
-              {records[4]}
+              {histories[histories.length - 1][4]}
             </td>
             <td className='space' data-space='5'>
-              {records[5]}
+              {histories[histories.length - 1][5]}
             </td>
           </tr>
           <tr className='board-row'>
             <td className='space' data-space='6'>
-              {records[6]}
+              {histories[histories.length - 1][6]}
             </td>
             <td className='space' data-space='7'>
-              {records[7]}
+              {histories[histories.length - 1][7]}
             </td>
             <td className='space' data-space='8'>
-              {records[8]}
+              {histories[histories.length - 1][8]}
             </td>
           </tr>
         </tbody>

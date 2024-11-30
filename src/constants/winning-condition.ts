@@ -1,6 +1,6 @@
 type Condition = [number, number, number];
 
-const WINNING_CONDITION: Condition[] = [
+export const WINNING_CONDITION: Condition[] = [
   [0, 1, 2],
   [3, 4, 5],
   [6, 7, 8],
@@ -8,5 +8,5 @@ const WINNING_CONDITION: Condition[] = [
   [1, 4, 7],
   [2, 5, 8],
   [0, 4, 8],
-  [0, 4, 8],
+  [2, 4, 6],
 ];
