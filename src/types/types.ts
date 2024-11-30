@@ -17,4 +17,7 @@ export interface Dispatch {
   handleHistoriesAdd: (records: Records) => void;
   handleHistoriesBack: (key: number) => void;
   handleHistoriesReset: () => void;
+  setTurn: React.Dispatch<React.SetStateAction<string>>;
+  setRecords: React.Dispatch<React.SetStateAction<Records>>;
+  setScores: React.Dispatch<React.SetStateAction<Scores>>;
 }

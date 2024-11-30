@@ -19,8 +19,8 @@ const reducer = (state: Histories, action: DispatchAction) => {
   }
 };
 
-const StateContext = createContext<React.Context<State> | null>(null);
-const DispatchContext = createContext<React.Context<Dispatch> | null>(null);
+export const StateContext = createContext<State | null>(null);
+export const DispatchContext = createContext<Dispatch | null>(null);
 
 // 커스텀 훅까지 고려해서, 상태들을 Context로 관리
 function App() {
@@ -30,30 +30,43 @@ function App() {
   const [scores, setScores] = useState<Scores>({ O: 0, X: 0 });
 
   // dispatch 감싼 이벤트 함수들 초기화
-  const { handleHistoriesBack, handleHistoriesReset } = useDispatch(dispatch);
+  const { handleHistoriesAdd, handleHistoriesBack, handleHistoriesReset } = useDispatch(dispatch);
 
   return (
-    <div>
-      <Header
-        turn={turn}
-        scores={scores}
-        setScores={setScores}
-        handleHistoriesReset={handleHistoriesReset}
-      />
-      <div className='contents'>
-        <Board
-          turn={turn}
-          histories={histories}
-          records={records}
-          scores={scores}
-          setTurn={setTurn}
-          setRecords={setRecords}
-          setScores={setScores}
-          dispatch={dispatch}
-        />
-        <Sidebar histories={histories} handleHistoriesBack={handleHistoriesBack} />
-      </div>
-    </div>
+    <StateContext.Provider value={{ histories, turn, records, scores }}>
+      <DispatchContext.Provider
+        value={{
+          handleHistoriesAdd,
+          handleHistoriesBack,
+          handleHistoriesReset,
+          setTurn,
+          setRecords,
+          setScores,
+        }}
+      >
+        <div>
+          <Header
+            turn={turn}
+            scores={scores}
+            setScores={setScores}
+            handleHistoriesReset={handleHistoriesReset}
+          />
+          <div className='contents'>
+            <Board
+              turn={turn}
+              histories={histories}
+              records={records}
+              scores={scores}
+              setTurn={setTurn}
+              setRecords={setRecords}
+              setScores={setScores}
+              dispatch={dispatch}
+            />
+            <Sidebar histories={histories} handleHistoriesBack={handleHistoriesBack} />
+          </div>
+        </div>
+      </DispatchContext.Provider>
+    </StateContext.Provider>
   );
 }
 

@@ -1,33 +1,16 @@
 import './Board.css';
-import { useEffect, useState } from 'react';
-import { DispatchAction, Records, Scores } from '../types/types';
+import { useEffect, useState, useContext } from 'react';
+import { Dispatch, DispatchAction, Records, Scores, State } from '../types/types';
 import { WINNING_CONDITION } from '../constants/winning-condition';
-import useDispatch from '../hooks/useDispatch';
 import useCreateRecords from '../hooks/useCreateRecords';
+import { StateContext, DispatchContext } from '../App';
 
-interface Props {
-  turn: string;
-  records: Records;
-  scores: Scores;
-  histories: Records[];
-  setTurn: React.Dispatch<React.SetStateAction<string>>;
-  setRecords: React.Dispatch<React.SetStateAction<Records>>;
-  setScores: React.Dispatch<React.SetStateAction<Scores>>;
-  dispatch: React.Dispatch<DispatchAction>;
-}
-
-const Board = ({
-  turn,
-  records,
-  scores,
-  histories,
-  setTurn,
-  setRecords,
-  setScores,
-  dispatch,
-}: Props) => {
+const Board = () => {
+  const { turn, records, scores, histories } = useContext(StateContext) as State;
+  const { setTurn, setRecords, setScores, handleHistoriesAdd, handleHistoriesReset } = useContext(
+    DispatchContext
+  ) as Dispatch;
   const [alert, setAlert] = useState(false);
-  const { handleHistoriesAdd, handleHistoriesReset } = useDispatch(dispatch);
 
   const handleBoardClick = (e: React.MouseEvent<HTMLElement>) => {
     if (!(e.target instanceof HTMLTableCellElement)) return; // td 말고 다른 곳(경계 사이 등) 클릭하면 그냥 리턴

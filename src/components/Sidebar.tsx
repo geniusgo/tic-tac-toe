@@ -1,12 +1,12 @@
 import './Sidebar.css';
-import { Records } from '../types/types';
+import { useContext } from 'react';
+import { Dispatch, Records, State } from '../types/types';
+import { StateContext, DispatchContext } from '../App';
 
-interface Props {
-  histories: Records[];
-  handleHistoriesBack: (key: number) => void;
-}
+const Sidebar = () => {
+  const { histories } = useContext(StateContext) as State; // null이 아님을 단언
+  const { handleHistoriesBack } = useContext(DispatchContext) as Dispatch; // null이 아님을 단언
 
-const Sidebar = ({ histories, handleHistoriesBack }: Props) => {
   const handleHistories = (e: React.MouseEvent<HTMLElement>) => {
     const target = e.target as HTMLElement;
     handleHistoriesBack(Number(target.id));

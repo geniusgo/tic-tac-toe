@@ -1,14 +1,12 @@
 import './Header.css';
-import { Scores } from '../types/types';
+import { useContext } from 'react';
+import { Dispatch, Scores, State } from '../types/types';
+import { StateContext, DispatchContext } from '../App';
 
-interface Props {
-  turn: string;
-  scores: Scores;
-  setScores: React.Dispatch<React.SetStateAction<Scores>>;
-  handleHistoriesReset: () => void;
-}
+const Header = () => {
+  const { turn, scores } = useContext(StateContext) as State; // null이 아님을 단언
+  const { setScores, handleHistoriesReset } = useContext(DispatchContext) as Dispatch; // null이 아님을 단언
 
-const Header = ({ turn, scores, setScores, handleHistoriesReset }: Props) => {
   const handleGameReset = (e: React.MouseEvent<HTMLElement>) => {
     handleHistoriesReset();
   };
