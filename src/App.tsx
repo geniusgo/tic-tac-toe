@@ -1,16 +1,12 @@
 import './App.css';
-import { useReducer, useState } from 'react';
-import { Histories, Records, Scores } from './types/types';
+import { useReducer, useState, createContext } from 'react';
+import { Histories, Records, Scores, DispatchAction, State, Dispatch } from './types/types';
+import useDispatch from './hooks/useDispatch';
 import Header from './components/Header';
 import Board from './components/Board';
 import Sidebar from './components/Sidebar';
 
-type Action =
-  | { type: 'ADD'; records: string[] }
-  | { type: 'BACK'; key: number }
-  | { type: 'RESET' };
-
-const reducer = (state: Histories, action: Action) => {
+const reducer = (state: Histories, action: DispatchAction) => {
   switch (action.type) {
     case 'ADD':
       return [...state, action.records];
@@ -23,32 +19,18 @@ const reducer = (state: Histories, action: Action) => {
   }
 };
 
-// 컴포넌트 구조가 깊지 않기 때문에 props로 상태 전달하고 관리
+const StateContext = createContext<React.Context<State> | null>(null);
+const DispatchContext = createContext<React.Context<Dispatch> | null>(null);
+
+// 커스텀 훅까지 고려해서, 상태들을 Context로 관리
 function App() {
   const [histories, dispatch] = useReducer(reducer, [Array(9).fill('')]); // 진행된 턴의 누적 기록 보관
   const [turn, setTurn] = useState('O'); // 누구 차례인지, 처음은 O부터 시작
   const [records, setRecords] = useState<Records>(() => histories[histories.length - 1]);
   const [scores, setScores] = useState<Scores>({ O: 0, X: 0 });
 
-  const handleHistoriesAdd = (records: string[]) => {
-    dispatch({
-      type: 'ADD',
-      records,
-    });
-  };
-
-  const handleHistoriesBack = (key: number) => {
-    dispatch({
-      type: 'BACK',
-      key,
-    });
-  };
-
-  const handleHistoriesReset = () => {
-    dispatch({
-      type: 'RESET',
-    });
-  };
+  // dispatch 감싼 이벤트 함수들 초기화
+  const { handleHistoriesBack, handleHistoriesReset } = useDispatch(dispatch);
 
   return (
     <div>
@@ -67,8 +49,7 @@ function App() {
           setTurn={setTurn}
           setRecords={setRecords}
           setScores={setScores}
-          handleHistoriesAdd={handleHistoriesAdd}
-          handleHistoriesReset={handleHistoriesReset}
+          dispatch={dispatch}
         />
         <Sidebar histories={histories} handleHistoriesBack={handleHistoriesBack} />
       </div>

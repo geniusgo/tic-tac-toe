@@ -1,7 +1,9 @@
 import './Board.css';
 import { useEffect, useState } from 'react';
-import { Records, Scores } from '../types/types';
+import { DispatchAction, Records, Scores } from '../types/types';
 import { WINNING_CONDITION } from '../constants/winning-condition';
+import useDispatch from '../hooks/useDispatch';
+import useCreateRecords from '../hooks/useCreateRecords';
 
 interface Props {
   turn: string;
@@ -11,8 +13,7 @@ interface Props {
   setTurn: React.Dispatch<React.SetStateAction<string>>;
   setRecords: React.Dispatch<React.SetStateAction<Records>>;
   setScores: React.Dispatch<React.SetStateAction<Scores>>;
-  handleHistoriesAdd: (record: string[]) => void;
-  handleHistoriesReset: () => void;
+  dispatch: React.Dispatch<DispatchAction>;
 }
 
 const Board = ({
@@ -23,13 +24,13 @@ const Board = ({
   setTurn,
   setRecords,
   setScores,
-  handleHistoriesAdd,
-  handleHistoriesReset,
+  dispatch,
 }: Props) => {
   const [alert, setAlert] = useState(false);
+  const { handleHistoriesAdd, handleHistoriesReset } = useDispatch(dispatch);
 
-  // space 클릭할 때마다 O-X 화면에 표시하고 records에 기록
   const handleBoardClick = (e: React.MouseEvent<HTMLElement>) => {
+    if (!(e.target instanceof HTMLTableCellElement)) return; // td 말고 다른 곳(경계 사이 등) 클릭하면 그냥 리턴
     const target = e.target as HTMLElement; // dataset 가져오기 위해 e.target을 HTMLElement 타입으로 단언
 
     // 한 번 둔 위치에 다시 두면 안내 문구 보여주기
@@ -39,16 +40,14 @@ const Board = ({
     }
 
     // 새로 두는 곳이면 newRecords 배열 만들어서 histories 상태 업데이트
-    const newRecords = records.slice(); // setRecords 할 새로운 newRecords 복제
-    newRecords[Number(target.dataset.space)] = turn;
-    handleHistoriesAdd(newRecords);
+    handleHistoriesAdd(useCreateRecords(records, target, turn));
 
     // turn 변경하고, 혹시 alert 떴었으면 false로 변경
     setTurn(turn === 'O' ? 'X' : 'O');
     if (alert) setAlert(false);
   };
 
-  // histories 값 바뀌고 나면 마지막 인덱스 배열로 records 값 변경
+  // histories 값 변경되면 마지막 인덱스 배열로 records 값 변경
   useEffect(() => {
     setRecords(histories[histories.length - 1]);
   }, [histories]);
