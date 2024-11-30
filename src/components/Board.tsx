@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
 import './Board.css';
-import { Records } from '../types/types';
+import { Records, Scores } from '../types/types';
 import { WINNING_CONDITION } from '../constants/winning-condition';
 
 interface Props {
   turn: string;
   records: Records;
+  scores: Scores;
   histories: Records[];
   setTurn: React.Dispatch<React.SetStateAction<string>>;
   setRecords: React.Dispatch<React.SetStateAction<Records>>;
+  setScores: React.Dispatch<React.SetStateAction<Scores>>;
   handleHistoriesAdd: (record: string[]) => void;
   handleHistoriesReset: () => void;
 }
@@ -16,9 +18,11 @@ interface Props {
 const Board = ({
   turn,
   records,
+  scores,
   histories,
   setTurn,
   setRecords,
+  setScores,
   handleHistoriesAdd,
   handleHistoriesReset,
 }: Props) => {
@@ -51,6 +55,7 @@ const Board = ({
 
   // records 변경되면 승리 조건 파악하고 충족 시 끝내기
   useEffect(() => {
+    let checker = false;
     // 승리 조건에 해당하는 경우 있는지 확인
     WINNING_CONDITION.forEach((condition) => {
       const condition0 = records[condition[0]] !== '';
@@ -58,14 +63,18 @@ const Board = ({
       const condition2 = records[condition[0]] === records[condition[2]];
 
       if (condition0 && condition1 && condition2) {
+        scores[turn === 'O' ? 'X' : 'O'] += 1;
+        setScores({ ...scores });
         if (window.confirm(`${turn === 'O' ? 'X' : 'O'} 승리하였습니다. 다시 할까요?`)) {
           handleHistoriesReset();
         }
+
+        checker = true;
       }
     });
 
-    // 마지막 칸까지 다 둔건지 확인하고 그 안에 승부 안 났으면 무승부
-    if (histories.length === 10) {
+    if (histories.length === 10 && !checker) {
+      // 마지막 칸까지 다 둔건지 확인하고 그 안에 승부 안 났으면 무승부
       if (window.confirm('무승부입니다. 다시 할까요?')) {
         handleHistoriesReset();
       }

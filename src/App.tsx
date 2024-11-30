@@ -3,7 +3,7 @@ import Header from './components/Header';
 import Board from './components/Board';
 import Sidebar from './components/Sidebar';
 import { useReducer, useState, useEffect } from 'react';
-import { Histories, Records } from './types/types';
+import { Histories, Records, Scores } from './types/types';
 import { WINNING_CONDITION } from './constants/winning-condition';
 
 type Action =
@@ -29,6 +29,7 @@ function App() {
   const [histories, dispatch] = useReducer(reducer, [Array(9).fill('')]); // 진행된 턴의 누적 기록 보관
   const [turn, setTurn] = useState('O'); // 누구 차례인지, 처음은 O부터 시작
   const [records, setRecords] = useState<Records>(() => histories[histories.length - 1]);
+  const [scores, setScores] = useState<Scores>({ O: 0, X: 0 });
 
   const handleHistoriesAdd = (records: string[]) => {
     dispatch({
@@ -52,14 +53,21 @@ function App() {
 
   return (
     <div>
-      <Header turn={turn} handleHistoriesReset={handleHistoriesReset} />
+      <Header
+        turn={turn}
+        scores={scores}
+        setScores={setScores}
+        handleHistoriesReset={handleHistoriesReset}
+      />
       <div className='contents'>
         <Board
           turn={turn}
           histories={histories}
           records={records}
+          scores={scores}
           setTurn={setTurn}
           setRecords={setRecords}
+          setScores={setScores}
           handleHistoriesAdd={handleHistoriesAdd}
           handleHistoriesReset={handleHistoriesReset}
         />
