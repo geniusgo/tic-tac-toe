@@ -3,7 +3,7 @@ import Header from './components/Header';
 import Board from './components/Board';
 import Sidebar from './components/Sidebar';
 import { useReducer, useState, useEffect } from 'react';
-import { Histories, Record } from './types/types';
+import { Histories, Records } from './types/types';
 
 type Action =
   | { type: 'ADD'; records: string[] }
@@ -17,7 +17,7 @@ const reducer = (state: Histories, action: Action) => {
     case 'BACK':
       return [...state].slice(0, action.key + 1);
     case 'RESET':
-      return [];
+      return [Array(9).fill('')];
     default:
       return state;
   }
@@ -25,10 +25,9 @@ const reducer = (state: Histories, action: Action) => {
 
 // 컴포넌트 구조가 깊지 않기 때문에 props로 상태 전달하고 관리
 function App() {
-  const [histories, dispatch] = useReducer(reducer, []); // 진행된 턴의 누적 기록 보관
+  const [histories, dispatch] = useReducer(reducer, [Array(9).fill('')]); // 진행된 턴의 누적 기록 보관
   const [turn, setTurn] = useState('O'); // 누구 차례인지, 처음은 O부터 시작
-  const [goBack, setGoBack] = useState(false);
-  const [doReset, setDoReset] = useState(false);
+  const [records, setRecords] = useState<Records>(() => histories[histories.length - 1]);
 
   useEffect(() => {
     console.log(histories);
@@ -42,7 +41,6 @@ function App() {
   };
 
   const handleHistoriesBack = (key: number) => {
-    setGoBack(true);
     dispatch({
       type: 'BACK',
       key,
@@ -50,7 +48,6 @@ function App() {
   };
 
   const handleHistoriesReset = () => {
-    setDoReset(true);
     dispatch({
       type: 'RESET',
     });
@@ -62,12 +59,10 @@ function App() {
       <div className='contents'>
         <Board
           turn={turn}
-          goBack={goBack}
-          doReset={doReset}
           histories={histories}
+          records={records}
           setTurn={setTurn}
-          setGoBack={setGoBack}
-          setDoReset={setDoReset}
+          setRecords={setRecords}
           handleHistoriesAdd={handleHistoriesAdd}
         />
         <Sidebar histories={histories} handleHistoriesBack={handleHistoriesBack} />

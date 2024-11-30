@@ -1,2 +1,2 @@
-export type Record = string[];
-export type Histories = Record[];
+export type Records = string[];
+export type Histories = Records[];

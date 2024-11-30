@@ -1,8 +1,8 @@
 import './Sidebar.css';
-import { Record } from '../types/types';
+import { Records } from '../types/types';
 
 interface Props {
-  histories: Record[];
+  histories: Records[];
   handleHistoriesBack: (key: number) => void;
 }
 
@@ -17,6 +17,7 @@ const Sidebar = ({ histories, handleHistoriesBack }: Props) => {
       <h4>Turn 기록</h4>
       {histories.map((_, idx) => {
         if (idx === 0) return;
+        // key를 인덱스로 하는 게 좀 찝찝해서, 변경 고민해보기
         return (
           <button id={String(idx)} key={idx} onClick={handleClick}>{`${idx} 번째 turn`}</button>
         );

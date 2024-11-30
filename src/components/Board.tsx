@@ -1,30 +1,18 @@
 import { useEffect, useState } from 'react';
 import './Board.css';
-import { Record } from '../types/types';
+import { Records } from '../types/types';
 
 interface Props {
   turn: string;
-  goBack: boolean;
-  doReset: boolean;
-  histories: Record[];
+  records: Records;
+  histories: Records[];
   setTurn: React.Dispatch<React.SetStateAction<string>>;
-  setGoBack: React.Dispatch<React.SetStateAction<boolean>>;
-  setDoReset: React.Dispatch<React.SetStateAction<boolean>>;
+  setRecords: React.Dispatch<React.SetStateAction<Records>>;
   handleHistoriesAdd: (record: string[]) => void;
 }
 
-const Board = ({
-  turn,
-  goBack,
-  doReset,
-  histories,
-  setTurn,
-  setGoBack,
-  setDoReset,
-  handleHistoriesAdd,
-}: Props) => {
+const Board = ({ turn, records, histories, setTurn, setRecords, handleHistoriesAdd }: Props) => {
   const [alert, setAlert] = useState(false);
-  const [records, setRecords] = useState<Record>(Array(9).fill(''));
 
   // space 클릭할 때마다 O-X 화면에 표시하고 records에 기록
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
@@ -36,34 +24,19 @@ const Board = ({
       return;
     }
 
-    // 새로운 위치라면 records에 반영
+    // 새로 두는 곳이면 newRecords 배열 만들어서 histories 상태 업데이트
     const newRecords = records.slice(); // setRecords 할 새로운 newRecords 복제
     newRecords[Number(target.dataset.space)] = turn;
-    setRecords(newRecords); // records 반영
-    setTurn(turn === 'O' ? 'X' : 'O'); // turn 변경
-    alert ? setAlert(false) : ''; // alert가 켜졌었다면 끄기
+    handleHistoriesAdd(newRecords);
+
+    // turn 변경하고, 혹시 alert 떴었으면 false로 변경
+    setTurn(turn === 'O' ? 'X' : 'O');
+    if (alert) setAlert(false);
   };
 
-  /** 여기 두 useEffect 구조가 너무 지저분해서, 변경 필요 **/
+  // histories 값 바뀌고 나면 마지막 인덱스 배열로 records 값 변경
   useEffect(() => {
-    console.log(goBack);
-    // records 값 변경되면 histories도 변경
-    if (!goBack) {
-      handleHistoriesAdd(records); // histories에 값 반영
-    }
-
-    setGoBack(false);
-    setDoReset(false);
-  }, [records]);
-
-  useEffect(() => {
-    if (goBack || doReset) {
-      if (histories.length) {
-        setRecords(histories[histories.length - 1]);
-      } else {
-        setRecords(Array(9).fill(''));
-      }
-    }
+    setRecords(histories[histories.length - 1]);
   }, [histories]);
 
   return (
