@@ -2,32 +2,21 @@ import './Board.css';
 import { useEffect, useState, useContext } from 'react';
 import { Dispatch, DispatchAction, Records, Scores, State } from '../types/types';
 import { WINNING_CONDITION } from '../constants/winning-condition';
-import useCreateRecords from '../hooks/useCreateRecords';
+import useTurnOver from '../hooks/useTurnOver';
 import { StateContext, DispatchContext } from '../App';
 
 const Board = () => {
   const { turn, records, scores, histories } = useContext(StateContext) as State;
-  const { setTurn, setRecords, setScores, handleHistoriesAdd, handleHistoriesReset } = useContext(
-    DispatchContext
-  ) as Dispatch;
+  const { setRecords, setScores, handleHistoriesReset } = useContext(DispatchContext) as Dispatch;
   const [alert, setAlert] = useState(false);
 
   const handleBoardClick = (e: React.MouseEvent<HTMLElement>) => {
-    if (!(e.target instanceof HTMLTableCellElement)) return; // td 말고 다른 곳(경계 사이 등) 클릭하면 그냥 리턴
     const target = e.target as HTMLElement; // dataset 가져오기 위해 e.target을 HTMLElement 타입으로 단언
 
-    // 한 번 둔 위치에 다시 두면 안내 문구 보여주기
-    if (records[Number(target.dataset.space)] !== '') {
-      setAlert(true);
-      return;
-    }
-
-    // 새로 두는 곳이면 newRecords 배열 만들어서 histories 상태 업데이트
-    handleHistoriesAdd(useCreateRecords(records, target, turn));
-
-    // turn 변경하고, 혹시 alert 떴었으면 false로 변경
-    setTurn(turn === 'O' ? 'X' : 'O');
-    if (alert) setAlert(false);
+    // 한 번 둔 위치에 다시 두면 안내 문구 보여주고, 아니면 TurnOver 동작 수행
+    records[Number(target.dataset.space)] !== ''
+      ? setAlert(true)
+      : useTurnOver({ target, alert, setAlert });
   };
 
   // histories 값 변경되면 마지막 인덱스 배열로 records 값 변경
