@@ -49,9 +49,9 @@ const Board = ({
     setRecords(histories[histories.length - 1]);
   }, [histories]);
 
-  // 승리 조건 충족 시 끝내기
+  // records 변경되면 승리 조건 파악하고 충족 시 끝내기
   useEffect(() => {
-    // records 바뀔 때마다 승리 조건에 해당하는지 확인해서 분기 처리
+    // 승리 조건에 해당하는 경우 있는지 확인
     WINNING_CONDITION.forEach((condition) => {
       const condition0 = records[condition[0]] !== '';
       const condition1 = records[condition[0]] === records[condition[1]];
@@ -63,6 +63,13 @@ const Board = ({
         }
       }
     });
+
+    // 마지막 칸까지 다 둔건지 확인하고 그 안에 승부 안 났으면 무승부
+    if (histories.length === 10) {
+      if (window.confirm('무승부입니다. 다시 할까요?')) {
+        handleHistoriesReset();
+      }
+    }
   }, [records]);
 
   return (

@@ -30,10 +30,6 @@ function App() {
   const [turn, setTurn] = useState('O'); // 누구 차례인지, 처음은 O부터 시작
   const [records, setRecords] = useState<Records>(() => histories[histories.length - 1]);
 
-  useEffect(() => {
-    console.log(histories);
-  }, [histories]);
-
   const handleHistoriesAdd = (records: string[]) => {
     dispatch({
       type: 'ADD',
