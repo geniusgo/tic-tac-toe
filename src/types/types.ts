@@ -9,7 +9,6 @@ export type DispatchAction =
 export interface State {
   histories: Histories;
   turn: string;
-  records: Records;
   scores: Scores;
 }
 
@@ -18,6 +17,5 @@ export interface Dispatch {
   handleHistoriesBack: (key: number) => void;
   handleHistoriesReset: () => void;
   setTurn: React.Dispatch<React.SetStateAction<string>>;
-  setRecords: React.Dispatch<React.SetStateAction<Records>>;
   setScores: React.Dispatch<React.SetStateAction<Scores>>;
 }

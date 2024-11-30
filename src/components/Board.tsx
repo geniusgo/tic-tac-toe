@@ -1,56 +1,70 @@
 import './Board.css';
 import { useEffect, useState, useContext } from 'react';
-import { Dispatch, DispatchAction, Records, Scores, State } from '../types/types';
+import { Dispatch, State, Records } from '../types/types';
 import { WINNING_CONDITION } from '../constants/winning-condition';
+import useCreateRecords from '../hooks/useCreateRecords';
 import useTurnOver from '../hooks/useTurnOver';
 import { StateContext, DispatchContext } from '../App';
 
+const isWinning = (records: Records) => {
+  const win = WINNING_CONDITION.filter((condition) => {
+    const condition0 = records[condition[0]] !== '';
+    const condition1 = records[condition[0]] === records[condition[1]];
+    const condition2 = records[condition[0]] === records[condition[2]];
+
+    return condition0 && condition1 && condition2;
+  });
+
+  return !!win.length;
+};
+
 const Board = () => {
-  const { turn, records, scores, histories } = useContext(StateContext) as State;
-  const { setRecords, setScores, handleHistoriesReset } = useContext(DispatchContext) as Dispatch;
+  const { turn, scores, histories } = useContext(StateContext) as State;
+  const { setTurn, setScores, handleHistoriesAdd, handleHistoriesReset } = useContext(
+    DispatchContext
+  ) as Dispatch;
   const [alert, setAlert] = useState(false);
+  const [winner, setWinner] = useState('');
 
+  // 한 번 둔 위치에 다시 두면 안내 문구 보여주고, 아니면 TurnOver 동작 수행
   const handleBoardClick = (e: React.MouseEvent<HTMLElement>) => {
-    const target = e.target as HTMLElement; // dataset 가져오기 위해 e.target을 HTMLElement 타입으로 단언
-
-    // 한 번 둔 위치에 다시 두면 안내 문구 보여주고, 아니면 TurnOver 동작 수행
-    records[Number(target.dataset.space)] !== ''
+    const target = e.target as HTMLElement;
+    histories[histories.length - 1][Number(target.dataset.space)] !== ''
       ? setAlert(true)
-      : useTurnOver({ target, alert, setAlert });
+      : handleHistoriesAdd(useCreateRecords(histories[histories.length - 1], target, turn)); // 새로 두는 곳이면 newRecords 배열 만들어서 histories 상태 업데이트
   };
 
-  // histories 값 변경되면 마지막 인덱스 배열로 records 값 변경
+  // turn over 동작: 승리 여부 확인, turn, alert 업데이트
   useEffect(() => {
-    setRecords(histories[histories.length - 1]);
+    const win = isWinning(histories[histories.length - 1]); // 이기는 조건에 해당하는지 확인
+
+    if (win) {
+      setWinner(`${turn}`);
+    } else if (histories.length === 10) {
+      setWinner('D');
+    } else {
+      setTurn(turn === 'O' ? 'X' : 'O'); // turn 변경
+      if (alert) setAlert(false); // alert true면 false로 변경
+    }
   }, [histories]);
 
-  // records 변경되면 승리 조건 파악하고 충족 시 끝내기
+  // Game 종료 동작
   useEffect(() => {
-    let checker = false;
-    // 승리 조건에 해당하는 경우 있는지 확인
-    WINNING_CONDITION.forEach((condition) => {
-      const condition0 = records[condition[0]] !== '';
-      const condition1 = records[condition[0]] === records[condition[1]];
-      const condition2 = records[condition[0]] === records[condition[2]];
-
-      if (condition0 && condition1 && condition2) {
-        scores[turn === 'O' ? 'X' : 'O'] += 1;
-        setScores({ ...scores });
-        if (window.confirm(`${turn === 'O' ? 'X' : 'O'} 승리하였습니다. 다시 할까요?`)) {
-          handleHistoriesReset();
-        }
-
-        checker = true;
+    if (winner === 'O' || winner === 'X') {
+      scores[turn] += 1;
+      setScores({ ...scores });
+      if (window.confirm(`${turn} 승리하였습니다. 다시 할까요?`)) {
+        handleHistoriesReset();
       }
-    });
+      return;
+    }
 
-    if (histories.length === 10 && !checker) {
-      // 마지막 칸까지 다 둔건지 확인하고 그 안에 승부 안 났으면 무승부
+    if (winner === 'D') {
       if (window.confirm('무승부입니다. 다시 할까요?')) {
         handleHistoriesReset();
       }
     }
-  }, [records]);
+  }, [winner]);
 
   return (
     <div className='board-container'>

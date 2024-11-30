@@ -6,6 +6,7 @@ import Header from './components/Header';
 import Board from './components/Board';
 import Sidebar from './components/Sidebar';
 
+/** histories 상태 변경 dispatch 함수 **/
 const reducer = (state: Histories, action: DispatchAction) => {
   switch (action.type) {
     case 'ADD':
@@ -19,50 +20,34 @@ const reducer = (state: Histories, action: DispatchAction) => {
   }
 };
 
+/** 하위 컴포넌트에 전달할 상태 생성 **/
 export const StateContext = createContext<State | null>(null);
 export const DispatchContext = createContext<Dispatch | null>(null);
 
-// 커스텀 훅까지 고려해서, 상태들을 Context로 관리
 function App() {
   const [histories, dispatch] = useReducer(reducer, [Array(9).fill('')]); // 진행된 턴의 누적 기록 보관
   const [turn, setTurn] = useState('O'); // 누구 차례인지, 처음은 O부터 시작
-  const [records, setRecords] = useState<Records>(() => histories[histories.length - 1]);
   const [scores, setScores] = useState<Scores>({ O: 0, X: 0 });
 
   // dispatch 감싼 이벤트 함수들 초기화
   const { handleHistoriesAdd, handleHistoriesBack, handleHistoriesReset } = useDispatch(dispatch);
 
   return (
-    <StateContext.Provider value={{ histories, turn, records, scores }}>
+    <StateContext.Provider value={{ histories, turn, scores }}>
       <DispatchContext.Provider
         value={{
           handleHistoriesAdd,
           handleHistoriesBack,
           handleHistoriesReset,
           setTurn,
-          setRecords,
           setScores,
         }}
       >
         <div>
-          <Header
-            turn={turn}
-            scores={scores}
-            setScores={setScores}
-            handleHistoriesReset={handleHistoriesReset}
-          />
+          <Header />
           <div className='contents'>
-            <Board
-              turn={turn}
-              histories={histories}
-              records={records}
-              scores={scores}
-              setTurn={setTurn}
-              setRecords={setRecords}
-              setScores={setScores}
-              dispatch={dispatch}
-            />
-            <Sidebar histories={histories} handleHistoriesBack={handleHistoriesBack} />
+            <Board />
+            <Sidebar />
           </div>
         </div>
       </DispatchContext.Provider>
