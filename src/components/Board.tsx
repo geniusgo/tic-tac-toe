@@ -7,7 +7,8 @@ import { StateContext, DispatchContext } from '../App';
 
 /** 승리 여부를 판단해주는 함수 **/
 const isWinning = (records: Records) => {
-  const win = WINNING_CONDITION.filter((condition) => {
+  const copiedWinningCondition = JSON.parse(JSON.stringify(WINNING_CONDITION));
+  const win = copiedWinningCondition.filter((condition: [number, number, number]) => {
     const condition0 = records[condition[0]] !== '';
     const condition1 = records[condition[0]] === records[condition[1]];
     const condition2 = records[condition[0]] === records[condition[2]];
@@ -49,8 +50,14 @@ const Board = () => {
     } else if (histories.length === 10) {
       setWinner('D');
     } else {
-      setTurn(turn === 'O' ? 'X' : 'O'); // turn 변경
-      if (alert) setAlert(false); // alert true면 false로 변경
+      const countO = histories[histories.length - 1].filter((record) => record === 'O').length;
+      const countX = histories[histories.length - 1].filter((record) => record === 'X').length;
+      if (countO === countX) {
+        setTurn(turn === 'O' ? 'X' : 'O'); // turn 변경
+      } else {
+        setTurn(countO > countX ? 'X' : 'O');
+      }
+      setAlert(false); // alert false로 변경
     }
   }, [histories]);
 
@@ -63,16 +70,14 @@ const Board = () => {
     if (winner === 'O' || winner === 'X') {
       scores[turn] += 1;
       setScores({ ...scores });
-      if (window.confirm(`${turn} 승리하였습니다. 다시 할까요?`)) {
-        handleHistoriesReset();
-      }
+      window.alert(`${turn} 승리하였습니다.`);
+      handleHistoriesReset();
       return;
     }
 
     if (winner === 'D') {
-      if (window.confirm('무승부입니다. 다시 할까요?')) {
-        handleHistoriesReset();
-      }
+      window.alert('무승부입니다');
+      handleHistoriesReset();
     }
   }, [winner]);
 
