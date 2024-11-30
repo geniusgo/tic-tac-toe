@@ -13,4 +13,9 @@
   padding: 0;
   text-align: center;
   border: 1px solid #000000;
+  cursor: pointer;
+}
+
+.board > tr > td:hover {
+  background-color: rgb(240, 240, 240);
 }
