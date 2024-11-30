@@ -3,14 +3,16 @@ import Header from './components/Header';
 import Board from './components/Board';
 import Sidebar from './components/Sidebar';
 import { useReducer, useState, useEffect } from 'react';
-import { Histories } from './types/types';
+import { Histories, Record } from './types/types';
 
-type Action = { type: string; record: string[] };
+type Action = { type: 'ADD'; records: string[] } | { type: 'BACK'; key: number };
 
 const reducer = (state: Histories, action: Action) => {
   switch (action.type) {
     case 'ADD':
-      return [...state, action.record];
+      return [...state, action.records];
+    case 'BACK':
+      return [...state].slice(0, action.key + 1);
     default:
       return state;
   }
@@ -20,15 +22,24 @@ const reducer = (state: Histories, action: Action) => {
 function App() {
   const [histories, dispatch] = useReducer(reducer, []); // 진행된 턴의 누적 기록 보관
   const [turn, setTurn] = useState('O'); // 누구 차례인지, 처음은 O부터 시작
+  const [goBack, setGoBack] = useState(false);
 
   useEffect(() => {
     console.log(histories);
-  });
+  }, [histories]);
 
-  const handleHistoriesAdd = (record: string[]) => {
+  const handleHistoriesAdd = (records: string[]) => {
     dispatch({
       type: 'ADD',
-      record,
+      records,
+    });
+  };
+
+  const handleHistoriesBack = (key: number) => {
+    setGoBack(true);
+    dispatch({
+      type: 'BACK',
+      key,
     });
   };
 
@@ -36,8 +47,15 @@ function App() {
     <div>
       <Header turn={turn} />
       <div className='contents'>
-        <Board turn={turn} setTurn={setTurn} handleHistoriesAdd={handleHistoriesAdd} />
-        <Sidebar histories={histories} />
+        <Board
+          turn={turn}
+          goBack={goBack}
+          histories={histories}
+          setTurn={setTurn}
+          setGoBack={setGoBack}
+          handleHistoriesAdd={handleHistoriesAdd}
+        />
+        <Sidebar histories={histories} handleHistoriesBack={handleHistoriesBack} />
       </div>
     </div>
   );
