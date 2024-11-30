@@ -5,13 +5,24 @@ import { Record } from '../types/types';
 interface Props {
   turn: string;
   goBack: boolean;
+  doReset: boolean;
   histories: Record[];
   setTurn: React.Dispatch<React.SetStateAction<string>>;
   setGoBack: React.Dispatch<React.SetStateAction<boolean>>;
+  setDoReset: React.Dispatch<React.SetStateAction<boolean>>;
   handleHistoriesAdd: (record: string[]) => void;
 }
 
-const Board = ({ turn, goBack, histories, setTurn, setGoBack, handleHistoriesAdd }: Props) => {
+const Board = ({
+  turn,
+  goBack,
+  doReset,
+  histories,
+  setTurn,
+  setGoBack,
+  setDoReset,
+  handleHistoriesAdd,
+}: Props) => {
   const [alert, setAlert] = useState(false);
   const [records, setRecords] = useState<Record>(Array(9).fill(''));
 
@@ -42,11 +53,16 @@ const Board = ({ turn, goBack, histories, setTurn, setGoBack, handleHistoriesAdd
     }
 
     setGoBack(false);
+    setDoReset(false);
   }, [records]);
 
   useEffect(() => {
-    if (goBack) {
-      setRecords(histories[histories.length - 1]);
+    if (goBack || doReset) {
+      if (histories.length) {
+        setRecords(histories[histories.length - 1]);
+      } else {
+        setRecords(Array(9).fill(''));
+      }
     }
   }, [histories]);
 

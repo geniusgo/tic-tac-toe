@@ -2,15 +2,20 @@ import './Header.css';
 
 interface Props {
   turn: string;
+  handleHistoriesReset: () => void;
 }
 
-const Header = ({ turn }: Props) => {
+const Header = ({ turn, handleHistoriesReset }: Props) => {
+  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+    handleHistoriesReset();
+  };
+
   return (
     <div className='header'>
       <div className='turn'>{`현재 ${turn}의 턴입니다`}</div>
       <div className='score'>{`O: ${0} vs X: ${1}`}</div>
       <div className='re-start'>
-        <button>다시하기</button>
+        <button onClick={handleClick}>다시하기</button>
       </div>
     </div>
   );
